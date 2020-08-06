@@ -1,0 +1,24 @@
+name:                battleship
+version:             0.1.0.0
+synopsis:            Battleship implemented in Haskell
+license:             NCSA
+build-type:          Simple
+cabal-version:       >=1.10
+
+executable main
+    hs-source-dirs:     app
+    main-is:            Main.hs
+    other-modules:      Lib , Parser
+    ghc-options:        -threaded -rtsopts -with-rtsopts=-N
+    build-depends:      base , unordered-containers >= 0.2 , parsec , mtl , random
+    default-language:   Haskell2010
+
+test-suite test
+    type:               exitcode-stdio-1.0
+    other-modules:      Main , Lib , Spec , Parser
+    hs-source-dirs:     app , test
+    main-is:            Spec.hs
+    ghc-options:        -threaded -rtsopts -with-rtsopts=-N -main-is Spec.main
+    build-depends:      base , test-framework, test-framework-hunit, unordered-containers >= 0.2 ,
+                        HUnit, parsec , mtl , random
+    default-language:   Haskell2010
