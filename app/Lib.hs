@@ -316,7 +316,7 @@ place c1 i1 c2 i2 = do
 -- determines the number of times a given element is found in a list
 -- used to determine if there is a winner
 -- copied from:
---https://codereview.stackexchange.com/questions/139587/count-occurrences-of-an-element-in-a-list
+-- https://codereview.stackexchange.com/questions/139587/count-occurrences-of-an-element-in-a-list
 numTimesFound :: Ord a => a -> [a] -> Int
 numTimesFound _ [] = 0
 numTimesFound x list = sum $ map (\a -> 1) $ filter (== x) list
@@ -338,12 +338,12 @@ eval (Print) = do
 eval (Fire c i) = do
   (bs, out, sh, r) <- get
   let (newB1, newB2, check) = fire c i (bs!!1) (bs!!2)
-      newG = ((bs!!0):newB1:newB2:(bs!!3):[], check++out, sh, r)
+      newG = ((bs!!0):newB1:newB2:(bs!!3):[], out, sh, r)
   put newG
   g2 <- compFire
   put g2
-  result <- (eval Print)
-  return result
+  (g3, o3, s3, r3) <- (eval Print)
+  return (g3, o3 ++ check, s3, r3)
 eval (Place c1 i1 c2 i2) = do
   g <- get
   g2@(b, _, sh, r) <- place c1 i1 c2 i2

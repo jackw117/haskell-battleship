@@ -18,7 +18,8 @@ repl :: GameState -> IO ()
 repl s1@(bs, output, ships, r) = do
   r2 <- newStdGen
   let s = (bs, output, ships, r2)
-  --testing for comp placement and firing
+
+  -- testing for comp placement and firing
 
   -- let ot = evalState (printGame 4) s
   -- putStrLn ot
@@ -31,11 +32,23 @@ repl s1@(bs, output, ships, r) = do
   -- check if user has won
   if win (bs!!2) then do
     putStrLn "You win!"
+    let ot = evalState (printGame 3) s
+    let ot2 = evalState (printGame 4) s
+    putStrLn "Computer ships:"
+    putStrLn ot
+    putStrLn "Computer guesses:"
+    putStrLn ot2
     return()
 
   -- check if computer has won
   else if win (bs!!0) then do
     putStrLn "You lose..."
+    let ot = evalState (printGame 3) s
+    let ot2 = evalState (printGame 4) s
+    putStrLn "Computer ships:"
+    putStrLn ot
+    putStrLn "Computer guesses:"
+    putStrLn ot2
     return()
 
   -- check if user still needs to place down ships
