@@ -6,6 +6,7 @@ import Parser
 import Main hiding (main)
 import Text.ParserCombinators.Parsec (parse)
 import Control.Monad.State
+import Debug.Trace
 import System.Random
 
 main :: IO Counts
@@ -14,7 +15,7 @@ main = do
   let g = evalState initialState r
   runTestTT $ allTests g
 
-allTests g = TestList [placeTests g, fireTests g, randomTests g]
+allTests g = TestList [placeTests g, fireTests g, randomTests g, printTests g]
 
 placeTests g = TestList [TestLabel "test1" (test1 g),
                          TestLabel "test2" (test2 g),
@@ -25,7 +26,11 @@ fireTests g = TestList [TestLabel "test 5" (test5 g),
                         TestLabel "test 6" (test6 g),
                         TestLabel "test 7" (test7 g)]
 
-randomTests g = TestList [TestLabel "test 8" (test8 g)]
+randomTests g = TestList [TestLabel "test 8" (test8 g),
+                          TestLabel "test 9" (test9 g)]
+
+printTests g = TestList [TestLabel "test 10" (test10 g),
+                         TestLabel "test 11" (test11 g)]
 
 test1 g = do
   let val = readExpr 1 "place a 11 a 13"
@@ -58,7 +63,7 @@ test5 (b1:b2:b3:b4:[], out, sh, r) = do
       -- replace b3 with an empty board to test
       (b, o2, s2, r2) = evalState (eval val) (b1:b2:initialBoard:b4:[], out, sh, r)
   TestCase (assertEqual "(Fire a 1),"
-              ((b!!1)!!0) (miss))
+              (miss) ((b!!1)!!0))
 
 test6 g = do
   let val = readExpr 2 "fire k 1"
@@ -75,3 +80,22 @@ test8 (_, _, sh, r) = do
       f = numTimesFound here b
   TestCase (assertEqual "random board correct size,"
               (sum initialShips) (f))
+
+test9 (b1:b2:b3:b4:[], out, sh, r) = do
+  let val = readExpr 2 "fire a 1"
+      -- trick the computer into thinking it has a hit for A1
+      -- it will then fire on A2 which will be a miss
+      b4t = replaceIndex 0 hit b4
+      (b, o2, s2, r2) = evalState (compFire) (b1:b2:b3:b4t:[], out, sh, r)
+  TestCase (assertEqual "computer will fire to the right if the coordinate A1 is seen to be a hit,"
+              (miss) ((b!!3)!!1))
+
+test10 g = do
+  let val = readExpr 1 "print"
+  TestCase (assertEqual "print is not valid in phase 1,"
+              ("\"command\" (line 1, column 1):\nunexpected \"r\"\nexpecting \"place\", \"new\" or \"quit\"") (show val))
+
+test11 g = do
+  let out = evalState (printGame 5) g
+  TestCase (assertEqual "can only print boards 1-4 (there is no board 5),"
+              ("\"Error: 5 is not a valid board number\\n\"") (show out))

@@ -238,7 +238,7 @@ fire c i b1 b2 =
    in if b2!!index == here || b2!!index == hit then
         (replaceIndex index hit b1, replaceIndex index hit b2, "Kaboom!\n")
       else
-        (replaceIndex index miss b1, b2, "Sploosh...\n")
+        (replaceIndex index miss b1, b2, "Splash...\n")
 
 -- determines if the given int is in the bounds of the game (1 <= i <= size)
 inBounds :: Int -> Bool
